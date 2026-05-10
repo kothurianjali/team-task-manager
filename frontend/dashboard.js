@@ -5,24 +5,35 @@ if (!token) {
     window.location = 'index.html';
 }
 
+const API_URL = 'https://team-task-manager-4-qcu4.onrender.com';
+
 async function createProject() {
+
     const title = document.getElementById('projectTitle').value;
     const description = document.getElementById('projectDescription').value;
 
-    await fetch('http://localhost:5000/api/projects', {
+    await fetch(`${API_URL}/api/projects`, {
+
         method: 'POST',
+
         headers: {
             'Content-Type': 'application/json',
             authorization: token
         },
-        body: JSON.stringify({ title, description })
+
+        body: JSON.stringify({
+            title,
+            description
+        })
     });
 
     loadProjects();
 }
 
 async function loadProjects() {
-    const response = await fetch('http://localhost:5000/api/projects', {
+
+    const response = await fetch(`${API_URL}/api/projects`, {
+
         headers: {
             authorization: token
         }
@@ -36,15 +47,19 @@ async function loadProjects() {
 }
 
 async function createTask() {
+
     const title = document.getElementById('taskTitle').value;
     const dueDate = document.getElementById('dueDate').value;
 
-    await fetch('http://localhost:5000/api/tasks', {
+    await fetch(`${API_URL}/api/tasks`, {
+
         method: 'POST',
+
         headers: {
             'Content-Type': 'application/json',
             authorization: token
         },
+
         body: JSON.stringify({
             title,
             status: 'Pending',
@@ -58,39 +73,66 @@ async function createTask() {
 }
 
 async function updateTaskStatus(id, status) {
-    await fetch(`http://localhost:5000/api/tasks/${id}/status`, {
+
+    await fetch(`${API_URL}/api/tasks/${id}/status`, {
+
         method: 'PATCH',
+
         headers: {
             'Content-Type': 'application/json',
             authorization: token
         },
-        body: JSON.stringify({ status })
+
+        body: JSON.stringify({
+            status
+        })
     });
 
     loadTasks();
 }
 
 async function loadTasks() {
-    const response = await fetch('http://localhost:5000/api/tasks', {
+
+    const response = await fetch(`${API_URL}/api/tasks`, {
+
         headers: {
             authorization: token
         }
     });
 
     const tasks = await response.json();
+
     const isAdmin = role === 'Admin';
 
     document.getElementById('tasks').innerHTML = tasks
         .map(t => {
+
             if (isAdmin) {
-                return `<li>
-                    ${t.title} - 
-                    <select onchange="updateTaskStatus(${t.id}, this.value)">
-                        <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                        <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                        <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
-                    </select>
-                </li>`;
+
+                return `
+                    <li>
+                        ${t.title} -
+
+                        <select onchange="updateTaskStatus(${t.id}, this.value)">
+
+                            <option value="Pending"
+                                ${t.status === 'Pending' ? 'selected' : ''}>
+                                Pending
+                            </option>
+
+                            <option value="In Progress"
+                                ${t.status === 'In Progress' ? 'selected' : ''}>
+                                In Progress
+                            </option>
+
+                            <option value="Completed"
+                                ${t.status === 'Completed' ? 'selected' : ''}>
+                                Completed
+                            </option>
+
+                        </select>
+                    </li>
+                `;
             }
 
             return `<li>${t.title} - ${t.status}</li>`;
@@ -98,6 +140,6 @@ async function loadTasks() {
         .join('');
 }
 
-// Initial loading
+// Initial Loading
 loadProjects();
 loadTasks();

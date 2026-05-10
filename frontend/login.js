@@ -4,12 +4,14 @@ async function login() {
     const password = document.getElementById('password').value;
 
     const response = await fetch(
-        'http://localhost:5000/api/auth/login',
+        'https://team-task-manager-4-qcu4.onrender.com/api/auth/login',
         {
             method: 'POST',
+
             headers: {
                 'Content-Type': 'application/json'
             },
+
             body: JSON.stringify({
                 email,
                 password
@@ -20,10 +22,23 @@ async function login() {
     const data = await response.json();
 
     if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('role', data.role || 'User');
+
+        localStorage.setItem(
+            'token',
+            data.token
+        );
+
+        localStorage.setItem(
+            'role',
+            data.role || 'User'
+        );
+
+        alert('Login Successful');
+
         window.location = 'dashboard.html';
+
     } else {
+
         alert(data.message);
     }
 }
